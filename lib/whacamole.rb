@@ -20,7 +20,12 @@ module Whacamole
 
         while true
           stream_url = heroku.create_log_session
-          Stream.new(stream_url, heroku, config.restart_threshold, &config.event_handler).watch
+          puts "#{app_name} | #{stream_url}"
+          begin
+            Stream.new(stream_url, heroku, config.restart_threshold, &config.event_handler).watch
+          rescue => ex
+            puts "#{app_name} - restarting monitoring (#{ex.message})"
+          end
         end
       end
     end
